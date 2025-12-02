@@ -1,5 +1,6 @@
 import mysql from "mysql2/promise"
 import { NextRequest, NextResponse } from "next/server";
+import { uploadToS3 } from "@/lib/s3-client";
 
 
 export async function POST(request: NextRequest) {
