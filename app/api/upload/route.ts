@@ -1,4 +1,6 @@
 import mysql from "mysql2/promise"
+import { NextRequest, NextResponse } from "next/server";
+
 
 export async function POST(request: NextRequest) {
   try {
