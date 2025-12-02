@@ -107,10 +107,8 @@ Resources deployed:
 | Secret | Database and AWS credentials |
 
 ```
-kubectl apply -f deployment.yml
-kubectl apply -f service.yml
-kubectl apply -f configmap.yml
-kubectl apply -f secret.yml
+curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
+helm install sharemedia .
 ```
 
 ## Support and Resources
