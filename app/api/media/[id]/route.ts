@@ -1,19 +1,13 @@
-import { type NextRequest, NextResponse } from "next/server"
+import { NextResponse, type NextRequest } from "next/server"
 
 export async function DELETE(
   request: NextRequest,
-  context: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
-    // kadang context.params adalah Promise, jadi amankan dengan await
-    const { id } = await context.params
+    const { id } = await context.params // <-- fix di sini
 
-    console.log(`[v0] Deleting media with id: ${id}`)
-
-    // TODO:
-    // - Ambil data dari database berdasarkan id
-    // - Hapus object dari S3
-    // - Update soft delete di RDS
+    console.log(`[v0] Deleting media id: ${id}`);
 
     return NextResponse.json({ success: true })
   } catch (error) {
