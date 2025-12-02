@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
       [filename, file.type, file.size, s3Url, s3Key]
     )
 
-    const [rows] = await connection.execute("SELECT * FROM media_files WHERE s3_url = ?", [s3Url])
+    const [rows] = await connection.execute("SELECT * FROM media_files WHERE s3_url = ?", [s3Url]) as any
     const mediaItem = rows[0]
 
     return NextResponse.json(mediaItem)
