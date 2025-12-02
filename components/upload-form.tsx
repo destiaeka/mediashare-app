@@ -1,10 +1,8 @@
 "use client"
 
 import type React from "react"
-
 import { useState, useRef } from "react"
 import { Button } from "@/components/ui/button"
-import { useToast } from "@/hooks/use-toast"
 import { Upload, type File, AlertCircle } from "lucide-react"
 
 interface UploadFormProps {
@@ -15,27 +13,18 @@ export function UploadForm({ onUploadSuccess }: UploadFormProps) {
   const [isUploading, setIsUploading] = useState(false)
   const [dragActive, setDragActive] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
-  const { toast } = useToast()
 
   const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/gif", "video/mp4", "video/webm"]
   const MAX_FILE_SIZE = 100 * 1024 * 1024 // 100MB
 
   const validateFile = (file: File) => {
     if (!ALLOWED_TYPES.includes(file.type)) {
-      toast({
-        title: "Invalid file type",
-        description: "Please upload an image (JPG, PNG, GIF) or video (MP4, WebM)",
-        variant: "destructive",
-      })
+      alert("Invalid file type. Allowed: JPG, PNG, GIF, MP4, WebM.")
       return false
     }
 
     if (file.size > MAX_FILE_SIZE) {
-      toast({
-        title: "File too large",
-        description: "Maximum file size is 100MB",
-        variant: "destructive",
-      })
+      alert("File too large. Max: 100MB.")
       return false
     }
 
@@ -55,27 +44,16 @@ export function UploadForm({ onUploadSuccess }: UploadFormProps) {
         body: formData,
       })
 
-      if (!response.ok) {
-        throw new Error("Upload failed")
-      }
+      if (!response.ok) throw new Error("Upload failed")
 
       const data = await response.json()
       onUploadSuccess(data)
 
-      toast({
-        title: "Upload successful",
-        description: `${file.name} has been uploaded`,
-      })
+      alert(`${file.name} uploaded successfully.`)
 
-      if (fileInputRef.current) {
-        fileInputRef.current.value = ""
-      }
+      if (fileInputRef.current) fileInputRef.current.value = ""
     } catch (error) {
-      toast({
-        title: "Upload failed",
-        description: "Please try again",
-        variant: "destructive",
-      })
+      alert("Upload failed. Please try again.")
     } finally {
       setIsUploading(false)
     }
@@ -84,11 +62,7 @@ export function UploadForm({ onUploadSuccess }: UploadFormProps) {
   const handleDrag = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault()
     e.stopPropagation()
-    if (e.type === "dragenter" || e.type === "dragover") {
-      setDragActive(true)
-    } else if (e.type === "dragleave") {
-      setDragActive(false)
-    }
+    setDragActive(e.type === "dragenter" || e.type === "dragover")
   }
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
@@ -97,16 +71,12 @@ export function UploadForm({ onUploadSuccess }: UploadFormProps) {
     setDragActive(false)
 
     const files = e.dataTransfer.files
-    if (files.length > 0) {
-      handleFile(files[0])
-    }
+    if (files.length > 0) handleFile(files[0])
   }
 
   const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.currentTarget.files
-    if (files && files.length > 0) {
-      handleFile(files[0])
-    }
+    if (files && files.length > 0) handleFile(files[0])
   }
 
   return (
@@ -129,6 +99,7 @@ export function UploadForm({ onUploadSuccess }: UploadFormProps) {
         <Upload className="mx-auto mb-3 text-muted-foreground" size={32} />
         <p className="text-sm font-medium text-foreground mb-1">Drag files here or click to select</p>
         <p className="text-xs text-muted-foreground mb-4">Supported: Images and videos up to 100MB</p>
+
         <input
           ref={fileInputRef}
           type="file"
@@ -137,6 +108,7 @@ export function UploadForm({ onUploadSuccess }: UploadFormProps) {
           className="hidden"
           disabled={isUploading}
         />
+
         <Button onClick={() => fileInputRef.current?.click()} disabled={isUploading} className="w-full">
           {isUploading ? "Uploading..." : "Select File"}
         </Button>
