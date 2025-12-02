@@ -1,0 +1,38 @@
+name: Push ECR Image
+
+on:
+  push:
+    branches: ["main"]
+
+env:
+  AWS_ACCOUNT_ID: 939095374446
+  AWS_REGION: us-east-1
+  ECR_REPOSITORY: finalproject
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: AWS configure
+        uses: aws-actions/configure-aws-credentials@v5.1.1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login ECR
+        run: |
+          aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 939095374446.dkr.ecr.us-east-1.amazonaws.com
+
+      - name: build image
+        run: |
+          IMAGE_URL="${{ env.AWS_ACCOUNT_ID}}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPOSITORY }}:${{ github.sha }}"
+          docker build -t $IMAGE_URL .
+          echo "IMAGE_URL=$IMAGE_URL" >> $GITHUB.ENV
+
+      - name: push to ECR
+        run: |
+          docker push ${{ env.IMAGE_URL}}
