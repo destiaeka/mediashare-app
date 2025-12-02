@@ -6,8 +6,10 @@ const s3Client = new S3Client({
   credentials: {
     accessKeyId: process.env.AWS_ACCESS_KEY_ID || "",
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || "",
+    sessionToken: process.env.AWS_SESSION_TOKEN || "", // 🔥 wajib untuk EKS or STS token
   },
 })
+
 
 export async function uploadToS3(file: Buffer, filename: string, contentType: string): Promise<string> {
   const bucket = process.env.AWS_S3_BUCKET_NAME
