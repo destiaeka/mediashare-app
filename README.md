@@ -2,6 +2,8 @@
 
 A modern web application for uploading and sharing photos and videos with secure storage on AWS S3 and metadata management in AWS RDS MySQL database.
 
+![Deskripsi](topology.jpg)
+
 ## Features
 
 - **Upload Media**: Upload photos and videos with drag-and-drop support
